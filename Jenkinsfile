@@ -23,7 +23,7 @@ pipeline {
 
     parameters {
         choice name: 'SharedService', choices: [
-            'undefined'
+            'undefined',
             'gam-ct',
             'gam-us',
             'lot-ct',
