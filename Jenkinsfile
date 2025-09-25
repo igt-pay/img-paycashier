@@ -51,7 +51,9 @@ pipeline {
                 expression { params.SharedService != 'undefined' }
             }
             steps {
-                echo "This step prepares version"
+                script {
+                    env.OurVersion=(sh label: 'Calculate image version', script: readFile('calculate_version.sh'), returnStdout: true).trim()
+                }
             }
         }
         stage('Download artefacts') {
