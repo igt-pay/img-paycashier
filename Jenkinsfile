@@ -57,7 +57,13 @@ pipeline {
                 expression { params.SharedService != 'undefined' }
             }
             steps {
-                echo "This step downloads cashier packages"
+                script {
+                    for (cli_version in readFile("Latest/paycashier-${params.SharedService}.versions").split('\n')){
+                        cli = cli_version.split(' ')[0]
+                        ver = cli_version.split(' ')[1]
+                        echo "cli: \"${cli}\", ver: \"${ver}\""
+                    }
+                }
             }
         }
         stage ('Build docker image') {
