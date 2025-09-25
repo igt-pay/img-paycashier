@@ -50,6 +50,7 @@ pipeline {
                 script {
                     if (params.SharedService != 'undefined') {
                         env.OurVersion = sh(label: 'Calculate image version', returnStdout: true, script: readFile('calculate_version.sh')).trim()
+                        env.OurVersion += "_${params.PatchLevel}"
                     } else {
                         env.OurVersion = 'undefined'
                     }
