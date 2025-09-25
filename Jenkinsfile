@@ -1,4 +1,4 @@
-def shouldPushImage() { return (env.BRANCH_NAME == "main") }
+def shouldPushImage() { return (env.BRANCH_NAME == "main" && params.SharedService != 'undefined') }
 
 def pushImage(imageName) {
     if (!shouldPushImage()) {
@@ -40,19 +40,14 @@ pipeline {
         buildDiscarder logRotator(numToKeepStr: '5')
     }
 
-    environment {
-        BuildType = 'snapshot'
-    }
-
     stages {
         stage('Prepare environment') {
             steps {
                 script {
+                    env.OurVersion = "undefined"
                     if (params.SharedService != 'undefined') {
                         env.OurVersion = sh(label: 'Calculate image version', returnStdout: true, script: readFile('calculate_version.sh')).trim()
                         env.OurVersion += "_${params.PatchLevel}"
-                    } else {
-                        env.OurVersion = 'undefined'
                     }
                 }
             }
@@ -78,11 +73,12 @@ pipeline {
     post {
         always {
             cleanWs()
-            buildName "$env.OurVersion"
+            buildName "${params.SharedService} ${params.PatchLevel} #${BUILD_NUMBER}"
+            buildDescription "${env.OurVersion}"
         }
         success {
             script {
-                if (shouldPushImage() && env.BuildType == 'release') {
+                if (shouldPushImage()) {
                     currentBuild.setKeepLog(true)
                 }
             }
