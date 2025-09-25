@@ -47,17 +47,26 @@ pipeline {
 
     stages {
         stage('Prepare environment') {
+            when{
+                expression { params.SharedService != 'undefined' }
+            }
             steps {
                 echo "This step prepares version"
                 buildName "$env.OurVersion"
             }
         }
         stage('Download artefacts') {
+            when{
+                expression { params.SharedService != 'undefined' }
+            }
             steps {
                 echo "This step downloads cashier packages"
             }
         }
         stage ('Build docker image') {
+            when{
+                expression { params.SharedService != 'undefined' }
+            }
             steps{
                 echo "This step builds cashier image"
             }
