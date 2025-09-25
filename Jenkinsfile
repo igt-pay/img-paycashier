@@ -65,7 +65,7 @@ pipeline {
                         echo "cli: \"${cli}\", ver: \"${ver}\""
                         if (ver.startsWith("22.0.")) {
                             sh "cp -v /igt/pay/Build/Resources/CashierApp/${cli}/${ver}/cashier${cli}.war artefacts/"
-                            sh "mv -v artefacts/cashier${cli}.war service/artefacts/cashierapp-cashier${cli}.war"
+                            sh "mv -v artefacts/cashier${cli}.war artefacts/cashierapp-cashier${cli}.war"
                         } else {
                             sh "$MVN dependency:copy -U -B -Dartifact=\"com.igt.pay:cashierapp:${ver}:war:cashier${cli}\" -DoutputDirectory=artefacts -Dmdep.stripVersion=true"
                         }
