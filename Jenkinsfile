@@ -57,7 +57,20 @@ pipeline {
                 expression { params.SharedService != 'undefined' }
             }
             steps {
-                echo "This step downloads cashier packages"
+                script {
+                    sh 'mkdir -p artefacts'
+                    for (cli_version in readFile("Latest/paycashier-${params.SharedService}.versions").split('\n')){
+                        cli = cli_version.split(' ')[0]
+                        ver = cli_version.split(' ')[1]
+                        echo "cli: \"${cli}\", ver: \"${ver}\""
+                        if (ver.startsWith("22.0.")) {
+                            sh "cp -v /igt/pay/Build/Resources/CashierApp/${cli}/${ver}/cashier${cli}.war artefacts/"
+                            sh "mv -v artefacts/cashier${cli}.war artefacts/cashierapp-cashier${cli}.war"
+                        } else {
+                            sh "$MVN dependency:copy -U -B -Dartifact=\"com.igt.pay:cashierapp:${ver}:war:cashier${cli}\" -DoutputDirectory=artefacts -Dmdep.stripVersion=true"
+                        }
+                    }
+                }
             }
         }
         stage ('Build docker image') {
