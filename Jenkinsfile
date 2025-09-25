@@ -52,7 +52,6 @@ pipeline {
             }
             steps {
                 echo "This step prepares version"
-                buildName "$env.OurVersion"
             }
         }
         stage('Download artefacts') {
@@ -76,6 +75,7 @@ pipeline {
     post {
         always {
             cleanWs()
+            buildName "$env.OurVersion"
         }
         success {
             script {
