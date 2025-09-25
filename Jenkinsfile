@@ -52,7 +52,7 @@ pipeline {
             }
             steps {
                 script {
-                    env.OurVersion=(sh label: 'Calculate image version', script: readFile('calculate_version.sh'), returnStdout: true).trim()
+                    env.OurVersion=sh(label: 'Calculate image version', script: readFile('calculate_version.sh'), returnStdout: true).trim()
                 }
             }
         }
