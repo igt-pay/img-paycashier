@@ -41,18 +41,18 @@ pipeline {
     }
 
     environment {
-        OurVersion = "undefined"
         BuildType = 'snapshot'
     }
 
     stages {
         stage('Prepare environment') {
-            when{
-                expression { params.SharedService != 'undefined' }
-            }
             steps {
                 script {
-                    env.OurVersion = sh(label: 'Calculate image version', returnStdout: true, script: readFile('calculate_version.sh')).trim()
+                    if (params.SharedService != 'undefined') {
+                        env.OurVersion = sh(label: 'Calculate image version', returnStdout: true, script: readFile('calculate_version.sh')).trim()
+                    } else {
+                        env.OurVersion = 'undefined'
+                    }
                 }
             }
         }
