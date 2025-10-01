@@ -45,6 +45,7 @@ pipeline {
             steps {
                 script {
                     env.OurVersion = "undefined"
+                    env.ImgHash = "undefined"
                     if (params.SharedService != 'undefined') {
                         env.OurVersion = sh(label: 'Calculate image version', returnStdout: true, script: readFile('calculate_version.sh')).trim()
                         env.OurVersion += "_${params.PatchLevel}"
@@ -79,7 +80,11 @@ pipeline {
             }
             steps{
                 sh "docker buildx build --build-arg base_version=${params.PatchLevel} -t igtpay/paycashier-${params.SharedService}:${env.OurVersion} ."
-                pushImage("igtpay/paycashier-${params.SharedService}:${env.OurVersion}")
+                script {
+                    if (pushImage("igtpay/paycashier-${params.SharedService}:${env.OurVersion}")) {
+                        env.ImgHash = sh(returnStdout: true, script: "docker inspect --format='{{index .RepoDigests 0}}' igtpay/paycashier-${params.SharedService}:${env.OurVersion} | sed 's/.*\\@//'").trim()
+                    }
+                }
             }
         }
     }
@@ -88,7 +93,16 @@ pipeline {
         always {
             cleanWs()
             buildName "${params.SharedService} ${params.PatchLevel} #${BUILD_NUMBER}"
-            buildDescription "${env.OurVersion}"
+            buildDescription """<table>
+    <tr>
+        <td><b>tag</b></td>
+        <td>${env.OurVersion}</td>
+    </tr>
+    <tr>
+        <td><b>sha256</b></td>
+        <td>${env.ImgHash}</td>
+    </tr>
+</table>"""
         }
         success {
             script {
