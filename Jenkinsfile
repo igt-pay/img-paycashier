@@ -95,6 +95,10 @@ pipeline {
             buildName "${params.SharedService} ${params.PatchLevel} #${BUILD_NUMBER}"
             buildDescription """<table>
     <tr>
+        <td><b>image</b></td>
+        <td>paycashier-${params.SharedService}</td>
+    </tr>
+    <tr>
         <td><b>tag</b></td>
         <td>${env.OurVersion}</td>
     </tr>
