@@ -103,7 +103,7 @@ pipeline {
         <td>${env.OurVersion}</td>
     </tr>
     <tr>
-        <td><b>sha256</b></td>
+        <td><b>hash</b></td>
         <td>${env.ImgHash}</td>
     </tr>
 </table>"""
@@ -117,4 +117,5 @@ pipeline {
         }
     }
     
+
 }
