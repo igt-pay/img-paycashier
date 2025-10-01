@@ -2,7 +2,7 @@ def shouldPushImage() { return (env.BRANCH_NAME == "main" && params.SharedServic
 
 def pushImage(imageName) {
     if (!shouldPushImage()) {
-        echo "Skipping push for ${imageName} as this is not the main branch."
+        echo "Skipping push for ${imageName}."
         return false
     }
     sh "docker tag ${imageName} igtpaygamdevacr.azurecr.io/${imageName}"
