@@ -2,7 +2,7 @@ def shouldPushImage() { return (env.BRANCH_NAME == "main" && params.SharedServic
 
 def pushImage(imageName) {
     if (!shouldPushImage()) {
-        echo "Skipping push for ${imageName} as this is not the main branch."
+        echo "Skipping push for ${imageName}."
         return false
     }
     sh "docker tag ${imageName} igtpaygamdevacr.azurecr.io/${imageName}"
@@ -60,14 +60,14 @@ pipeline {
                 script {
                     sh 'mkdir -p artefacts'
                     for (cli_version in readFile("Latest/paycashier-${params.SharedService}.versions").split('\n')){
-                        cli = cli_version.split(' ')[0]
-                        ver = cli_version.split(' ')[1]
+                        cli = cli_version.split(' ')[0].trim()
+                        ver = cli_version.split(' ')[1].trim()
                         echo "cli: \"${cli}\", ver: \"${ver}\""
                         if (ver.startsWith("22.0.")) {
                             sh "cp -v /igt/pay/Build/Resources/CashierApp/${cli}/${ver}/cashier${cli}.war artefacts/"
-                            sh "mv -v artefacts/cashier${cli}.war artefacts/cashierapp-cashier${cli}.war"
                         } else {
                             sh "$MVN dependency:copy -U -B -Dartifact=\"com.igt.pay:cashierapp:${ver}:war:cashier${cli}\" -DoutputDirectory=artefacts -Dmdep.stripVersion=true"
+                            sh "mv -v artefacts/cashierapp-cashier${cli}.war artefacts/cashier${cli}.war"
                         }
                     }
                 }
@@ -78,7 +78,8 @@ pipeline {
                 expression { params.SharedService != 'undefined' }
             }
             steps{
-                echo "This step builds cashier image"
+                sh "docker buildx build --build-arg base_version=${params.PatchLevel} -t igtpay/paycashier-${params.SharedService}:${env.OurVersion} ."
+                pushImage("igtpay/paycashier-${params.SharedService}:${env.OurVersion}")
             }
         }
     }
