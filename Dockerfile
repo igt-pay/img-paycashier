@@ -6,8 +6,7 @@ COPY bin/ /opt/igt/pay/bin/
 COPY conf/ /opt/tomcat/conf/
 COPY artefacts/ /opt/tomcat/webapps/
 
-USER root // 
-# RUN /tmp/buildroot/buildPayCashierImage.sh && /bin/bash
+USER root
 
 # Expose the ports we're interested in
 EXPOSE 8080
