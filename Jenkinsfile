@@ -60,8 +60,8 @@ pipeline {
                 script {
                     sh 'mkdir -p artefacts'
                     for (cli_version in readFile("Latest/paycashier-${params.SharedService}.versions").split('\n')){
-                        cli = cli_version.split(' ')[0]
-                        ver = cli_version.split(' ')[1]
+                        cli = cli_version.split(' ')[0].trim()
+                        ver = cli_version.split(' ')[1].trim()
                         echo "cli: \"${cli}\", ver: \"${ver}\""
                         if (ver.startsWith("22.0.")) {
                             sh "cp -v /igt/pay/Build/Resources/CashierApp/${cli}/${ver}/cashier${cli}.war artefacts/"
