@@ -65,9 +65,9 @@ pipeline {
                         echo "cli: \"${cli}\", ver: \"${ver}\""
                         if (ver.startsWith("22.0.")) {
                             sh "cp -v /igt/pay/Build/Resources/CashierApp/${cli}/${ver}/cashier${cli}.war artefacts/"
-                            sh "mv -v artefacts/cashier${cli}.war artefacts/cashierapp-cashier${cli}.war"
                         } else {
                             sh "$MVN dependency:copy -U -B -Dartifact=\"com.igt.pay:cashierapp:${ver}:war:cashier${cli}\" -DoutputDirectory=artefacts -Dmdep.stripVersion=true"
+                            sh "mv -v artefacts/cashierapp-cashier${cli}.war artefacts/cashier${cli}.war"
                         }
                     }
                 }
@@ -78,7 +78,7 @@ pipeline {
                 expression { params.SharedService != 'undefined' }
             }
             steps{
-                echo "This step builds cashier image"
+                sh "docker buildx build --build-arg base_version=${params.PatchLevel} -t igtpay/paycashier-${params.SharedService}:${env.OurVersion} ."
             }
         }
     }
