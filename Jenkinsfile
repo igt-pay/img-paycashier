@@ -79,6 +79,7 @@ pipeline {
             }
             steps{
                 sh "docker buildx build --build-arg base_version=${params.PatchLevel} -t igtpay/paycashier-${params.SharedService}:${env.OurVersion} ."
+                pushImage("igtpay/paycashier-${params.SharedService}:${env.OurVersion}")
             }
         }
     }
