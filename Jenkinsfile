@@ -30,6 +30,7 @@ pipeline {
             'lot-us',
             'lot-eu']
         choice name: 'PatchLevel', choices: [
+            '25.4',
             '25.3',
             '25.2',
             '25.1', 
@@ -119,3 +120,4 @@ pipeline {
     
 
 }
+
